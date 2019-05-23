@@ -17,7 +17,6 @@ func NewWriter(packetID uint16) *Writer {
 		buffer: new(bytes.Buffer),
 	}
 
-	writer.WriteUInt16(0)
 	writer.WriteUInt16(packetID)
 
 	return writer
@@ -25,7 +24,10 @@ func NewWriter(packetID uint16) *Writer {
 
 // GetData will return bytes array in buffer
 func (pw *Writer) GetData() []byte {
-	return pw.buffer.Bytes()
+	header := make([]byte, 2)
+	binary.LittleEndian.PutUint16(header, uint16(pw.buffer.Len()))
+
+	return append(header, pw.buffer.Bytes()...)
 }
 
 // WriteUInt8 perform writing uint8 data to byte buffer.
