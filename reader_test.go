@@ -179,7 +179,8 @@ func TestReadString(t *testing.T) {
 	t.Parallel()
 	expectedResult := "test"
 
-	var data = []byte{4, 0, 116, 101, 115, 116}
+	// var data = []byte{4, 0, 116, 101, 115, 116}
+	var data = []byte{116, 101, 115, 116, 0}
 
 	packetReader := Reader{
 		value: bytes.NewReader(data),
