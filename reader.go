@@ -11,6 +11,13 @@ type Reader struct {
 	value *bytes.Reader
 }
 
+// NewReader will create Reader with data
+func NewReader(data []byte) *Reader {
+	return &Reader{
+		value: bytes.NewReader(data),
+	}
+}
+
 // ReadString will read string
 func (pr *Reader) ReadString() string {
 	var charLength uint16
