@@ -14,7 +14,7 @@ type Reader struct {
 // NewReader will create Reader with data
 func NewReader(data []byte) *Reader {
 	return &Reader{
-		value: bytes.NewReader(data),
+		value: bytes.NewReader(data[2:]),
 	}
 }
 

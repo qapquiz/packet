@@ -17,6 +17,7 @@ func NewWriter(packetID uint16) *Writer {
 		buffer: new(bytes.Buffer),
 	}
 
+	writer.WriteUInt16(0)
 	writer.WriteUInt16(packetID)
 
 	return writer
