@@ -170,3 +170,12 @@ func (pr *Reader) ReadBoolean() bool {
 
 	return uint8(number) == 1
 }
+
+// Complete will return true if data reach zero
+func (pr *Reader) Complete() bool {
+	if pr.value.Len() == 0 {
+		return true
+	}
+
+	return false
+}
