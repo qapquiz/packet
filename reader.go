@@ -20,37 +20,21 @@ func NewReader(data []byte) *Reader {
 
 // ReadString will read string
 func (pr *Reader) ReadString() string {
-	// var charLength uint16
-	// err := binary.Read(pr.value, binary.LittleEndian, &charLength)
-	// if err != nil {
-	// 	log.Println("binary.Read uint16 failed: ", err)
-	// }
-
-	// messageBytes := make([]byte, charLength)
-
-	// for index := uint16(0); index < charLength; index++ {
-	// 	if charCode, err := pr.value.ReadByte(); err == nil {
-	// 		messageBytes[index] = charCode
-	// 	}
-	// }
-
-	// return string(messageBytes)
-	message := make([]byte, 0)
-
-	for {
-		charCode, err := pr.value.ReadByte()
-		if err != nil {
-			log.Fatal("cannot read bytes in packet.ReadString()")
-		}
-
-		if uint8(charCode) == 0 {
-			break
-		}
-
-		message = append(message, charCode)
+	var charLength uint16
+	err := binary.Read(pr.value, binary.LittleEndian, &charLength)
+	if err != nil {
+		log.Println("binary.Read uint16 failed: ", err)
 	}
 
-	return string(message[:])
+	messageBytes := make([]byte, charLength)
+
+	for index := uint16(0); index < charLength; index++ {
+		if charCode, err := pr.value.ReadByte(); err == nil {
+			messageBytes[index] = charCode
+		}
+	}
+
+	return string(messageBytes)
 }
 
 // ReadUInt8 will read uint8

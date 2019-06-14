@@ -30,6 +30,11 @@ func (pw *Writer) GetData() []byte {
 	return append(header, pw.buffer.Bytes()...)
 }
 
+// GetDataWithoutRemoveHeader will return bytes array in buffer without remove header
+func (pw *Writer) GetDataWithoutRemoveHeader() []byte {
+	return pw.buffer.Bytes()
+}
+
 // WriteUInt8 perform writing uint8 data to byte buffer.
 func (pw *Writer) WriteUInt8(data uint8) {
 	pw.write(data)
@@ -93,8 +98,10 @@ func (pw *Writer) WriteBoolean(data bool) {
 func (pw *Writer) write(data interface{}) {
 	switch v := data.(type) {
 	case string:
+		if err := binary.Write(pw.buffer, binary.LittleEndian, uint16(len(v))); err != nil {
+			log.Fatal("binary.Write failed: ", data, err)
+		}
 		pw.buffer.Write([]byte(v))
-		pw.buffer.WriteByte(uint8(0))
 	default:
 		if err := binary.Write(pw.buffer, binary.LittleEndian, data); err != nil {
 			log.Fatal("binary.Write failed: ", data, err)
