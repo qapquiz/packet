@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"log"
+	"sync"
 )
 
 // Writer will be write bytes
@@ -11,19 +12,25 @@ type Writer struct {
 	buffer *bytes.Buffer
 }
 
+var bufPool = sync.Pool{
+	New: func() interface{} {
+		return new(bytes.Buffer)
+	},
+}
+
 // NewWriter will create Writer will new buffer
 func NewWriter(packetID uint16) *Writer {
 	writer := &Writer{
-		buffer: new(bytes.Buffer),
+		buffer: bufPool.Get().(*bytes.Buffer),
 	}
 
 	writer.WriteUInt16(packetID)
-
 	return writer
 }
 
 // GetData will return bytes array in buffer
 func (pw *Writer) GetData() []byte {
+	defer bufPool.Put(pw)
 	header := make([]byte, 2)
 	binary.LittleEndian.PutUint16(header, uint16(pw.buffer.Len()-2))
 
@@ -98,10 +105,8 @@ func (pw *Writer) WriteBoolean(data bool) {
 func (pw *Writer) write(data interface{}) {
 	switch v := data.(type) {
 	case string:
-		if err := binary.Write(pw.buffer, binary.LittleEndian, uint16(len(v))); err != nil {
-			log.Fatal("binary.Write failed: ", data, err)
-		}
 		pw.buffer.Write([]byte(v))
+		pw.buffer.WriteByte(uint8(0))
 	default:
 		if err := binary.Write(pw.buffer, binary.LittleEndian, data); err != nil {
 			log.Fatal("binary.Write failed: ", data, err)

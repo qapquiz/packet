@@ -150,7 +150,7 @@ func TestWriteBoolean(t *testing.T) {
 
 func TestWriteString(t *testing.T) {
 	t.Parallel()
-	var expectedResult = []byte{17, 39, 4, 0, 84, 101, 115, 116}
+	var expectedResult = []byte{17, 39, 84, 101, 115, 116, 0}
 
 	packetWriter := NewWriter(10001)
 	packetWriter.WriteString("Test")
