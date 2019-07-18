@@ -24,6 +24,8 @@ func NewWriter(packetID uint16) *Writer {
 		buffer: bufPool.Get().(*bytes.Buffer),
 	}
 
+	writer.buffer.Reset()
+
 	writer.WriteUInt16(packetID)
 	return writer
 }
