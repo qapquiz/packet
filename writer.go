@@ -56,11 +56,6 @@ func (pw *Writer) GetDataWithoutPrefixHeader() []byte {
 	return pw.buffer.Bytes()
 }
 
-// GetDataWithoutRemoveHeader will return bytes array in buffer without remove header
-func (pw *Writer) GetDataWithoutRemoveHeader() []byte {
-	return pw.buffer.Bytes()
-}
-
 // WriteUInt8 perform writing uint8 data to byte buffer.
 func (pw *Writer) WriteUInt8(data uint8) {
 	pw.write(data)
