@@ -56,6 +56,11 @@ func (pw *Writer) GetDataWithoutPrefixHeader() []byte {
 	return pw.buffer.Bytes()
 }
 
+// WriteBytes perform writing []byte to byte buffer.
+func (pw *Writer) WriteBytes(data []byte) {
+	pw.write(data)
+}
+
 // WriteUInt8 perform writing uint8 data to byte buffer.
 func (pw *Writer) WriteUInt8(data uint8) {
 	pw.write(data)
