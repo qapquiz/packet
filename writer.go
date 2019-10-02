@@ -51,8 +51,8 @@ func (pw *Writer) GetData() []byte {
 	return append(header, pw.buffer.Bytes()...)
 }
 
-// GetDataWithoutPrefixHeader will return bytes array in buffer
-func (pw *Writer) GetDataWithoutPrefixHeader() []byte {
+// GetDataWithoutRemoveHeader will return bytes array in buffer
+func (pw *Writer) GetDataWithoutRemoveHeader() []byte {
 	return pw.buffer.Bytes()
 }
 
