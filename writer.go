@@ -18,6 +18,17 @@ var bufPool = sync.Pool{
 	},
 }
 
+// NewPlainWriter will create Writer without data
+func NewPlainWriter() *Writer {
+	writer := &Writer{
+		buffer: bufPool.Get().(*bytes.Buffer),
+	}
+
+	writer.buffer.Reset()
+
+	return writer
+}
+
 // NewWriter will create Writer will new buffer
 func NewWriter(packetID uint16) *Writer {
 	writer := &Writer{
@@ -30,13 +41,19 @@ func NewWriter(packetID uint16) *Writer {
 	return writer
 }
 
-// GetData will return bytes array in buffer
+// GetData will return bytes array in buffer prefix with header
 func (pw *Writer) GetData() []byte {
 	defer bufPool.Put(pw.buffer)
+
 	header := make([]byte, 2)
 	binary.LittleEndian.PutUint16(header, uint16(pw.buffer.Len()-2))
 
 	return append(header, pw.buffer.Bytes()...)
+}
+
+// GetDataWithoutPrefixHeader will return bytes array in buffer
+func (pw *Writer) GetDataWithoutPrefixHeader() []byte {
+	return pw.buffer.Bytes()
 }
 
 // GetDataWithoutRemoveHeader will return bytes array in buffer without remove header

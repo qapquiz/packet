@@ -11,10 +11,18 @@ type Reader struct {
 	value *bytes.Reader
 }
 
-// NewReader will create Reader with data
-func NewReader(data []byte) *Reader {
+// NewPlainReader will create Writer without cut header
+// NewPlainReader :: []byte -> *Reader
+func NewPlainReader(in []byte) *Reader {
 	return &Reader{
-		value: bytes.NewReader(data[2:]),
+		value: bytes.NewReader(in),
+	}
+}
+
+// NewReader will create Reader with data
+func NewReader(in []byte) *Reader {
+	return &Reader{
+		value: bytes.NewReader(in[2:]),
 	}
 }
 
