@@ -11,7 +11,7 @@ I recommend to use packet v2 only. But for compatible I will keep version 1 to o
 
 ## Usage
 
-### Read Packet
+### Write Packet
 ```
 w := NewWriter()
 
@@ -26,7 +26,7 @@ idx += w.WriteFloat64(a.Money, idx)
 return w.Bytes()
 ```
 
-### Write Packet
+### Read Packet
 ```
 r := NewReader(in)
 
