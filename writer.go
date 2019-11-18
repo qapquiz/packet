@@ -1,134 +1,189 @@
 package packet
 
 import (
-	"bytes"
-	"encoding/binary"
-	"log"
-	"sync"
+	"math"
 )
 
-// Writer will be write bytes
+// DefaultBufferCap is a default size of the []byte in Writer
+const defaultBufferCap int = 8
+
+// A Writer is a serializer
 type Writer struct {
-	buffer *bytes.Buffer
+	bufBytes   []byte
+	currentCap int
 }
 
-var bufPool = sync.Pool{
-	New: func() interface{} {
-		return new(bytes.Buffer)
-	},
+// NewWriter will create new Writer
+func NewWriter() Writer {
+	return Writer{
+		bufBytes:   make([]byte, defaultBufferCap),
+		currentCap: defaultBufferCap,
+	}
 }
 
-// NewPlainWriter will create Writer without data
-func NewPlainWriter() *Writer {
-	writer := &Writer{
-		buffer: bufPool.Get().(*bytes.Buffer),
+// Bytes will return []byte
+func (w Writer) Bytes() []byte {
+	return w.bufBytes
+}
+
+// WriteString will write string to []byte at index
+func (w *Writer) WriteString(s string, idx int) int {
+	l := len(s)
+	if idx+8+l > w.currentCap {
+		w.growBufferCap(idx + 8 + l)
 	}
 
-	writer.buffer.Reset()
+	n := w.WriteUInt64(uint64(l), idx)
 
-	return writer
+	copy(w.bufBytes[idx+n:idx+n+l], s)
+
+	return n + l
 }
 
-// NewWriter will create Writer will new buffer
-func NewWriter(packetID uint16) *Writer {
-	writer := &Writer{
-		buffer: bufPool.Get().(*bytes.Buffer),
+// WriteBoolean will write bool to the []byte at index
+func (w *Writer) WriteBoolean(b bool, idx int) int {
+	if idx+1 > w.currentCap {
+		w.growBufferCap(idx + 1)
 	}
 
-	writer.buffer.Reset()
+	if b {
+		w.WriteUInt8(1, idx)
+	} else {
+		w.WriteUInt8(0, idx)
+	}
 
-	writer.WriteUInt16(packetID)
-	return writer
+	return 1
 }
 
-// GetData will return bytes array in buffer prefix with header
-func (pw *Writer) GetData() []byte {
-	defer bufPool.Put(pw.buffer)
+// WriteFloat32 will write float32 to the []byte at index
+func (w *Writer) WriteFloat32(f float32, idx int) int {
+	if idx+4 > w.currentCap {
+		w.growBufferCap(idx + 4)
+	}
 
-	header := make([]byte, 2)
-	binary.LittleEndian.PutUint16(header, uint16(pw.buffer.Len()-2))
+	n := math.Float32bits(f)
 
-	return append(header, pw.buffer.Bytes()...)
+	w.WriteUInt32(n, idx)
+
+	return 4
 }
 
-// GetDataWithoutRemoveHeader will return bytes array in buffer
-func (pw *Writer) GetDataWithoutRemoveHeader() []byte {
-	return pw.buffer.Bytes()
+// WriteFloat64 will write float64 to the []byte at index
+func (w *Writer) WriteFloat64(f float64, idx int) int {
+	if idx+8 > w.currentCap {
+		w.growBufferCap(idx + 8)
+	}
+
+	n := math.Float64bits(f)
+
+	w.WriteUInt64(n, idx)
+
+	return 8
 }
 
-// WriteBytes perform writing []byte to byte buffer.
-func (pw *Writer) WriteBytes(data []byte) {
-	pw.write(data)
+// WriteInt8 will write uint8 to the []byte at index
+func (w *Writer) WriteInt8(n int8, idx int) int {
+	if idx+1 > w.currentCap {
+		w.growBufferCap(idx + 1)
+	}
+
+	w.bufBytes[idx] = byte(n)
+
+	return 1
 }
 
-// WriteUInt8 perform writing uint8 data to byte buffer.
-func (pw *Writer) WriteUInt8(data uint8) {
-	pw.write(data)
+// WriteInt16 will write uint16 to the []byte at index
+func (w *Writer) WriteInt16(n int16, idx int) int {
+	if idx+2 > w.currentCap {
+		w.growBufferCap(idx + 2)
+	}
+
+	for i := 0; i < 2; i++ {
+		w.bufBytes[idx+i] = byte(n >> (i * 8))
+	}
+
+	return 2
 }
 
-// WriteUInt16 perform writing uint16 data to byte buffer.
-func (pw *Writer) WriteUInt16(data uint16) {
-	pw.write(data)
+// WriteInt32 will write uint32 to the []byte at index
+func (w *Writer) WriteInt32(n int32, idx int) int {
+	if idx+4 > w.currentCap {
+		w.growBufferCap(idx + 4)
+	}
+
+	for i := 0; i < 4; i++ {
+		w.bufBytes[idx+i] = byte(n >> (i * 8))
+	}
+
+	return 4
 }
 
-// WriteUInt32 perform writing uint32 data to byte buffer.
-func (pw *Writer) WriteUInt32(data uint32) {
-	pw.write(data)
+// WriteInt64 will write uint64 to the []byte at index
+func (w *Writer) WriteInt64(n int64, idx int) int {
+	if idx+8 > w.currentCap {
+		w.growBufferCap(idx + 8)
+	}
+
+	for i := 0; i < 8; i++ {
+		w.bufBytes[idx+i] = byte(n >> (i * 8))
+	}
+
+	return 8
 }
 
-// WriteUInt64 perform writing uint64 data to byte buffer.
-func (pw *Writer) WriteUInt64(data uint64) {
-	pw.write(data)
+// WriteUInt8 will write uint8 to the []byte at index
+func (w *Writer) WriteUInt8(n uint8, idx int) int {
+	if idx+1 > w.currentCap {
+		w.growBufferCap(idx + 1)
+	}
+
+	w.bufBytes[idx] = byte(n)
+
+	return 1
 }
 
-// WriteInt8 perform writing int8 data to byte buffer.
-func (pw *Writer) WriteInt8(data int8) {
-	pw.write(data)
+// WriteUInt16 will write uint16 to the []byte at index
+func (w *Writer) WriteUInt16(n uint16, idx int) int {
+	if idx+2 > w.currentCap {
+		w.growBufferCap(idx + 2)
+	}
+
+	for i := 0; i < 2; i++ {
+		w.bufBytes[idx+i] = byte(n >> (i * 8))
+	}
+
+	return 2
 }
 
-// WriteInt16 perform writing int16 data to byte buffer.
-func (pw *Writer) WriteInt16(data int16) {
-	pw.write(data)
+// WriteUInt32 will write uint32 to the []byte at index
+func (w *Writer) WriteUInt32(n uint32, idx int) int {
+	if idx+4 > w.currentCap {
+		w.growBufferCap(idx + 4)
+	}
+
+	for i := 0; i < 4; i++ {
+		w.bufBytes[idx+i] = byte(n >> (i * 8))
+	}
+
+	return 4
 }
 
-// WriteInt32 perform writing int32 data to byte buffer.
-func (pw *Writer) WriteInt32(data int32) {
-	pw.write(data)
+// WriteUInt64 will write uint64 to the []byte at index
+func (w *Writer) WriteUInt64(n uint64, idx int) int {
+	if idx+8 > w.currentCap {
+		w.growBufferCap(idx + 8)
+	}
+
+	for i := 0; i < 8; i++ {
+		w.bufBytes[idx+i] = byte(n >> (i * 8))
+	}
+
+	return 8
 }
 
-// WriteInt64 perform writing int64 data to byte buffer.
-func (pw *Writer) WriteInt64(data int64) {
-	pw.write(data)
-}
-
-// WriteFloat32 perform writing float32 data to byte buffer.
-func (pw *Writer) WriteFloat32(data float32) {
-	pw.write(data)
-}
-
-// WriteFloat64 perform writing float64 data to byte buffer.
-func (pw *Writer) WriteFloat64(data float64) {
-	pw.write(data)
-}
-
-// WriteString perform writing string data to byte buffer.
-func (pw *Writer) WriteString(data string) {
-	pw.write(data)
-}
-
-// WriteBoolean perform writing boolean data to byte buffer.
-func (pw *Writer) WriteBoolean(data bool) {
-	pw.write(data)
-}
-
-func (pw *Writer) write(data interface{}) {
-	switch v := data.(type) {
-	case string:
-		pw.buffer.Write([]byte(v))
-		pw.buffer.WriteByte(uint8(0))
-	default:
-		if err := binary.Write(pw.buffer, binary.LittleEndian, data); err != nil {
-			log.Fatal("binary.Write failed: ", data, err)
-		}
+func (w *Writer) growBufferCap(lengthNeed int) {
+	for cap(w.bufBytes) < lengthNeed {
+		w.bufBytes = append(w.bufBytes, make([]byte, w.currentCap)...)
+		w.currentCap = w.currentCap * 2
 	}
 }

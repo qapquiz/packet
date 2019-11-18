@@ -1,228 +1,185 @@
 package packet
 
-import (
-	"bytes"
-	"testing"
-)
+import "testing"
 
-func TestReadUInt8(t *testing.T) {
-	t.Parallel()
-	expectedResult := uint8(20)
+func TestReadString(t *testing.T) {
+	want := "abc"
 
-	var data = []byte{20}
+	w := NewWriter()
+	w.WriteString(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadString()
 
-	actualResult := packetReader.ReadUInt8()
-
-	if expectedResult != actualResult && packetReader.value.Len() != 0 {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestReadUInt16(t *testing.T) {
-	t.Parallel()
-	expectedResult := uint16(10001)
+func TestReadBooleanTrue(t *testing.T) {
+	want := true
 
-	var data = []byte{17, 39}
+	w := NewWriter()
+	w.WriteBoolean(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadBoolean()
 
-	actualResult := packetReader.ReadUInt16()
-
-	if expectedResult != actualResult && packetReader.value.Len() != 0 {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestReadUInt32(t *testing.T) {
-	t.Parallel()
-	expectedResult := uint32(20)
+func TestReadBooleanFalse(t *testing.T) {
+	want := false
 
-	var data = []byte{20, 0, 0, 0}
+	w := NewWriter()
+	w.WriteBoolean(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadBoolean()
 
-	actualResult := packetReader.ReadUInt32()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
-	}
-}
-
-func TestReadUInt64(t *testing.T) {
-	t.Parallel()
-	expectedResult := uint64(20)
-
-	var data = []byte{20, 0, 0, 0, 0, 0, 0, 0}
-
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
-
-	actualResult := packetReader.ReadUInt64()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
-	}
-}
-
-func TestReadInt8(t *testing.T) {
-	t.Parallel()
-	expectedResult := int8(-20)
-
-	var data = []byte{236}
-
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
-
-	actualResult := packetReader.ReadInt8()
-
-	if expectedResult != actualResult && packetReader.value.Len() != 0 {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
-	}
-}
-
-func TestReadInt16(t *testing.T) {
-	t.Parallel()
-	expectedResult := int16(-10001)
-
-	var data = []byte{239, 216}
-
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
-
-	actualResult := packetReader.ReadInt16()
-
-	if expectedResult != actualResult && packetReader.value.Len() != 0 {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
-	}
-}
-
-func TestReadInt32(t *testing.T) {
-	t.Parallel()
-	expectedResult := int32(-20)
-
-	var data = []byte{236, 255, 255, 255}
-
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
-
-	actualResult := packetReader.ReadInt32()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
-	}
-}
-
-func TestReadInt64(t *testing.T) {
-	t.Parallel()
-	expectedResult := int64(-20)
-
-	var data = []byte{236, 255, 255, 255, 255, 255, 255, 255}
-
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
-
-	actualResult := packetReader.ReadInt64()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %d, actual %d", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
 func TestReadFloat32(t *testing.T) {
-	t.Parallel()
-	expectedResult := float32(-20.2)
+	want := float32(20.2)
 
-	var data = []byte{154, 153, 161, 193}
+	w := NewWriter()
+	w.WriteFloat32(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadFloat32()
 
-	actualResult := packetReader.ReadFloat32()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %f, actual %f", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
 func TestReadFloat64(t *testing.T) {
-	t.Parallel()
-	expectedResult := float64(-20.2)
+	want := float64(20.2)
 
-	var data = []byte{51, 51, 51, 51, 51, 51, 52, 192}
+	w := NewWriter()
+	w.WriteFloat64(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadFloat64()
 
-	actualResult := packetReader.ReadFloat64()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %f, actual %f", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestReadString(t *testing.T) {
-	t.Parallel()
-	expectedResult := "test"
+func TestReadInt8(t *testing.T) {
+	want := int8(20)
 
-	// var data = []byte{4, 0, 116, 101, 115, 116}
-	var data = []byte{116, 101, 115, 116, 0}
+	w := NewWriter()
+	w.WriteInt8(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadInt8()
 
-	actualResult := packetReader.ReadString()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %s, actual %s", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestBooleanWhenOneMustBeTrue(t *testing.T) {
-	t.Parallel()
-	expectedResult := true
+func TestReadInt16(t *testing.T) {
+	want := int16(20)
 
-	var data = []byte{1}
+	w := NewWriter()
+	w.WriteInt16(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
-	}
+	r := NewReader(w.Bytes())
+	got := r.ReadInt16()
 
-	actualResult := packetReader.ReadBoolean()
-
-	if expectedResult != actualResult {
-		t.Errorf("Expected %t, actual %t", expectedResult, actualResult)
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestBooleanWhenZeroMustBeFalse(t *testing.T) {
-	t.Parallel()
-	expectedResult := false
+func TestReadInt32(t *testing.T) {
+	want := int32(20)
 
-	var data = []byte{0}
+	w := NewWriter()
+	w.WriteInt32(want, 0)
 
-	packetReader := Reader{
-		value: bytes.NewReader(data),
+	r := NewReader(w.Bytes())
+	got := r.ReadInt32()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
+}
 
-	actualResult := packetReader.ReadBoolean()
+func TestReadInt64(t *testing.T) {
+	want := int64(20)
 
-	if expectedResult != actualResult {
-		t.Errorf("Expected %t, actual %t", expectedResult, actualResult)
+	w := NewWriter()
+	w.WriteInt64(want, 0)
+
+	r := NewReader(w.Bytes())
+	got := r.ReadInt64()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestReadUInt8(t *testing.T) {
+	want := uint8(20)
+
+	w := NewWriter()
+	w.WriteUInt8(want, 0)
+
+	r := NewReader(w.Bytes())
+	got := r.ReadUInt8()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestReadUInt16(t *testing.T) {
+	want := uint16(20)
+
+	w := NewWriter()
+	w.WriteUInt16(want, 0)
+
+	r := NewReader(w.Bytes())
+	got := r.ReadUInt16()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestReadUInt32(t *testing.T) {
+	want := uint32(20)
+
+	w := NewWriter()
+	w.WriteUInt32(want, 0)
+
+	r := NewReader(w.Bytes())
+	got := r.ReadUInt32()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestReadUInt64(t *testing.T) {
+	want := uint64(20)
+
+	w := NewWriter()
+	w.WriteUInt64(want, 0)
+
+	r := NewReader(w.Bytes())
+	got := r.ReadUInt64()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }

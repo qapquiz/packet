@@ -1,3 +1,3 @@
-module github.com/qapquiz/packet
+module github.com/qapquiz/packet/v2
 
-go 1.12
+go 1.13

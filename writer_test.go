@@ -1,166 +1,261 @@
 package packet
 
 import (
-	"reflect"
+	"bytes"
+	"encoding/binary"
 	"testing"
 )
 
-func TestWriteUInt8(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20}
+func TestWriteString(t *testing.T) {
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteUInt8(uint8(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteString("abc", idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	got := w.Bytes()
+	want := []byte{3, 0, 0, 0, 0, 0, 0, 0, 97, 98, 99}
+
+	if got[0] != want[0] && got[8] != want[8] && got[9] != want[9] && got[10] != want[10] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestWriteUInt16(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20, 0}
+func TestWriteTrueBoolean(t *testing.T) {
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteUInt16(uint16(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteBoolean(true, idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, true)
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestWriteUInt32(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20, 0, 0, 0}
+func TestWriteFalseBoolean(t *testing.T) {
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteUInt32(uint32(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteBoolean(false, idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, false)
+	if err != nil {
+		t.Error(err)
 	}
-}
 
-func TestWriteUInt64(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20, 0, 0, 0, 0, 0, 0, 0}
+	got := w.Bytes()
+	want := buf.Bytes()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteUInt64(uint64(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
-
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
-	}
-}
-
-func TestWriteInt8(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20}
-
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteInt8(int8(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
-
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
-	}
-}
-
-func TestWriteInt16(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20, 0}
-
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteInt16(int16(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
-
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
-	}
-}
-
-func TestWriteInt32(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20, 0, 0, 0}
-
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteInt32(int32(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
-
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
-	}
-}
-
-func TestWriteInt64(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 20, 0, 0, 0, 0, 0, 0, 0}
-
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteInt64(int64(20))
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
-
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	if got[0] != want[0] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
 func TestWriteFloat32(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 205, 204, 204, 61}
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteFloat32(0.1)
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteFloat32(float32(20), idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, float32(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
 func TestWriteFloat64(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 154, 153, 153, 153, 153, 153, 185, 63}
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteFloat64(0.1)
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteFloat64(float64(20), idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, float64(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] && got[4] != want[4] && got[5] != want[5] && got[6] != want[6] && got[7] != want[7] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestWriteBoolean(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 1}
+func TestWriteInt8(t *testing.T) {
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteBoolean(true)
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteInt8(int8(20), idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, int8(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func TestWriteString(t *testing.T) {
-	t.Parallel()
-	var expectedResult = []byte{17, 39, 84, 101, 115, 116, 0}
+func TestWriteInt16(t *testing.T) {
+	w := NewWriter()
 
-	packetWriter := NewWriter(10001)
-	packetWriter.WriteString("Test")
-	actualResult := packetWriter.GetDataWithoutRemoveHeader()
+	idx := 0
+	idx += w.WriteInt16(int16(20), idx)
 
-	if !compareBytes(expectedResult, actualResult) {
-		t.Errorf("Expected %v, actual %v", expectedResult, actualResult)
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, int16(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] {
+		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
 
-func compareBytes(firstBytes []byte, secondBytes []byte) bool {
-	return reflect.DeepEqual(firstBytes, secondBytes)
+func TestWriteInt32(t *testing.T) {
+	w := NewWriter()
+
+	idx := 0
+	idx += w.WriteInt32(int32(20), idx)
+
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, int32(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestWriteInt64(t *testing.T) {
+	w := NewWriter()
+
+	idx := 0
+	idx += w.WriteInt64(int64(20), idx)
+
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, int64(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] && got[4] != want[4] && got[5] != want[5] && got[6] != want[6] && got[7] != want[7] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestWriteUInt8(t *testing.T) {
+	w := NewWriter()
+
+	idx := 0
+	idx += w.WriteUInt8(uint8(20), idx)
+
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, uint8(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestWriteUInt16(t *testing.T) {
+	w := NewWriter()
+
+	idx := 0
+	idx += w.WriteUInt16(uint16(20), idx)
+
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, uint16(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestWriteUInt32(t *testing.T) {
+	w := NewWriter()
+
+	idx := 0
+	idx += w.WriteUInt32(uint32(20), idx)
+
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, uint32(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestWriteUInt64(t *testing.T) {
+	w := NewWriter()
+
+	idx := 0
+	idx += w.WriteUInt64(uint64(20), idx)
+
+	buf := bytes.NewBuffer([]byte{})
+	err := binary.Write(buf, binary.LittleEndian, uint64(20))
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := w.Bytes()
+	want := buf.Bytes()
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] && got[4] != want[4] && got[5] != want[5] && got[6] != want[6] && got[7] != want[7] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
 }
