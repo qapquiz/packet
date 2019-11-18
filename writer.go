@@ -5,7 +5,7 @@ import (
 )
 
 // DefaultBufferCap is a default size of the []byte in Writer
-const defaultBufferCap int = 8
+const defaultBufferCap int = 16
 
 // A Writer is a serializer
 type Writer struct {
