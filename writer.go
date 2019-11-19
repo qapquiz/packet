@@ -22,8 +22,30 @@ func NewWriter() Writer {
 	}
 }
 
+// NewWriterWithHeader will create new Writer with header(uint16) for contain Content-Length
+func NewWriterWithHeader() Writer {
+	w := Writer{
+		bufBytes: make([]byte, defaultBufferCap),
+		currentCap: defaultBufferCap,
+	}
+
+	w.WriteUInt16(0)
+	
+	return w
+}
+
 // Bytes will return []byte
 func (w Writer) Bytes() []byte {
+	return w.bufBytes[:w.currentCap]
+}
+
+// BytesWithHeader will return []byte with header
+func (w Writer) BytesWithHeader() []byte {
+	contentLength := uint16(len(w.bufBytes))
+
+	w.bufBytes[0] = byte(contentLength >> 0)
+	w.bufBytes[1] = byte(contentLength >> 8)
+
 	return w.bufBytes[:w.currentCap]
 }
 

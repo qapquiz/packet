@@ -22,6 +22,15 @@ func (r Reader) IsComplete() bool {
 	return len(r.bufBytes) == r.currentReadIndex
 }
 
+// SkipHeader will skip index from 0 to 2
+func (r *Reader) SkipHeader() {
+	if r.currentReadIndex != 0 {
+		return
+	}
+
+	r.currentReadIndex += 2
+}
+
 // ReadString will read boolean at index
 func (r *Reader) ReadString() string {
 	l := r.ReadUInt64()
