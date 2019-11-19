@@ -28,13 +28,12 @@ type A struct {
 func (a A) Marshal() []byte {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteString(a.Name, idx)
-	idx += w.WriteInt64(a.BirthDay.Unix(), idx)
-	idx += w.WriteString(a.Phone, idx)
-	idx += w.WriteInt32(int32(a.Siblings), idx)
-	idx += w.WriteBoolean(a.Spouse, idx)
-	idx += w.WriteFloat64(a.Money, idx)
+	w.WriteString(a.Name)
+	w.WriteInt64(a.BirthDay.Unix())
+	w.WriteString(a.Phone)
+	w.WriteInt32(int32(a.Siblings))
+	w.WriteBoolean(a.Spouse)
+	w.WriteFloat64(a.Money)
 
 	return w.Bytes()
 }

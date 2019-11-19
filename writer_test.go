@@ -9,8 +9,7 @@ import (
 func TestWriteString(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteString("abc", idx)
+	w.WriteString("abc")
 
 	got := w.Bytes()
 	want := []byte{3, 0, 0, 0, 0, 0, 0, 0, 97, 98, 99}
@@ -23,8 +22,7 @@ func TestWriteString(t *testing.T) {
 func TestWriteTrueBoolean(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteBoolean(true, idx)
+	w.WriteBoolean(true)
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, true)
@@ -43,8 +41,7 @@ func TestWriteTrueBoolean(t *testing.T) {
 func TestWriteFalseBoolean(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteBoolean(false, idx)
+	w.WriteBoolean(false)
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, false)
@@ -63,8 +60,7 @@ func TestWriteFalseBoolean(t *testing.T) {
 func TestWriteFloat32(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteFloat32(float32(20), idx)
+	w.WriteFloat32(float32(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, float32(20))
@@ -83,8 +79,7 @@ func TestWriteFloat32(t *testing.T) {
 func TestWriteFloat64(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteFloat64(float64(20), idx)
+	w.WriteFloat64(float64(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, float64(20))
@@ -103,8 +98,7 @@ func TestWriteFloat64(t *testing.T) {
 func TestWriteInt8(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteInt8(int8(20), idx)
+	w.WriteInt8(int8(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, int8(20))
@@ -123,8 +117,7 @@ func TestWriteInt8(t *testing.T) {
 func TestWriteInt16(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteInt16(int16(20), idx)
+	w.WriteInt16(int16(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, int16(20))
@@ -143,8 +136,7 @@ func TestWriteInt16(t *testing.T) {
 func TestWriteInt32(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteInt32(int32(20), idx)
+	w.WriteInt32(int32(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, int32(20))
@@ -163,8 +155,7 @@ func TestWriteInt32(t *testing.T) {
 func TestWriteInt64(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteInt64(int64(20), idx)
+	w.WriteInt64(int64(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, int64(20))
@@ -183,8 +174,7 @@ func TestWriteInt64(t *testing.T) {
 func TestWriteUInt8(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteUInt8(uint8(20), idx)
+	w.WriteUInt8(uint8(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, uint8(20))
@@ -203,8 +193,7 @@ func TestWriteUInt8(t *testing.T) {
 func TestWriteUInt16(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteUInt16(uint16(20), idx)
+	w.WriteUInt16(uint16(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, uint16(20))
@@ -223,8 +212,7 @@ func TestWriteUInt16(t *testing.T) {
 func TestWriteUInt32(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteUInt32(uint32(20), idx)
+	w.WriteUInt32(uint32(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, uint32(20))
@@ -243,8 +231,7 @@ func TestWriteUInt32(t *testing.T) {
 func TestWriteUInt64(t *testing.T) {
 	w := NewWriter()
 
-	idx := 0
-	idx += w.WriteUInt64(uint64(20), idx)
+	w.WriteUInt64(uint64(20))
 
 	buf := bytes.NewBuffer([]byte{})
 	err := binary.Write(buf, binary.LittleEndian, uint64(20))
