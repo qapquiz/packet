@@ -100,7 +100,7 @@ func (w *Writer) WriteInt16(n int16) {
 	}
 
 	for i := 0; i < 2; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> uint(i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i*8))
 	}
 
 	w.idx += 2
@@ -113,7 +113,7 @@ func (w *Writer) WriteInt32(n int32) {
 	}
 
 	for i := 0; i < 4; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> uint(i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i*8))
 	}
 
 	w.idx += 4
@@ -126,7 +126,7 @@ func (w *Writer) WriteInt64(n int64) {
 	}
 
 	for i := 0; i < 8; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> uint(i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i*8))
 	}
 
 	w.idx += 8
@@ -150,7 +150,7 @@ func (w *Writer) WriteUInt16(n uint16) {
 	}
 
 	for i := 0; i < 2; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> uint(i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i*8))
 	}
 
 	w.idx += 2
@@ -163,7 +163,7 @@ func (w *Writer) WriteUInt32(n uint32) {
 	}
 
 	for i := 0; i < 4; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> uint(i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i*8))
 	}
 
 	w.idx += 4
@@ -176,7 +176,7 @@ func (w *Writer) WriteUInt64(n uint64) {
 	}
 
 	for i := 0; i < 8; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> uint(i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 8
