@@ -17,6 +17,11 @@ func NewReader(in []byte) Reader {
 	}
 }
 
+// IsComplete check is server read all data
+func (r Reader) IsComplete() bool {
+	return len(r.bufBytes) == r.currentReadIndex
+}
+
 // ReadString will read boolean at index
 func (r *Reader) ReadString() string {
 	l := r.ReadUInt64()

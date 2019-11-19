@@ -5,7 +5,7 @@ import (
 )
 
 // DefaultBufferCap is a default size of the []byte in Writer
-const defaultBufferCap int = 16
+const defaultBufferCap int = 64
 
 // A Writer is a serializer
 type Writer struct {
@@ -23,7 +23,7 @@ func NewWriter() Writer {
 
 // Bytes will return []byte
 func (w Writer) Bytes() []byte {
-	return w.bufBytes
+	return w.bufBytes[:w.currentCap]
 }
 
 // WriteString will write string to []byte at index
