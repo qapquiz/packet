@@ -36,7 +36,7 @@ func NewWriterWithHeader() Writer {
 
 // Bytes will return []byte
 func (w Writer) Bytes() []byte {
-	return w.bufBytes[:w.currentCap]
+	return w.bufBytes[:w.idx]
 }
 
 // BytesWithHeader will return []byte with header
@@ -46,7 +46,7 @@ func (w Writer) BytesWithHeader() []byte {
 	w.bufBytes[0] = byte(contentLength >> 0)
 	w.bufBytes[1] = byte(contentLength >> 8)
 
-	return w.bufBytes[:w.currentCap]
+	return w.bufBytes[:w.idx]
 }
 
 // WriteString will write string to []byte at index
