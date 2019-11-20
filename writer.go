@@ -25,12 +25,12 @@ func NewWriter() Writer {
 // NewWriterWithHeader will create new Writer with header(uint16) for contain Content-Length
 func NewWriterWithHeader() Writer {
 	w := Writer{
-		bufBytes: make([]byte, defaultBufferCap),
+		bufBytes:   make([]byte, defaultBufferCap),
 		currentCap: defaultBufferCap,
 	}
 
 	w.WriteUInt16(0)
-	
+
 	return w
 }
 
@@ -65,17 +65,11 @@ func (w *Writer) WriteString(s string) {
 
 // WriteBoolean will write bool to the []byte at index
 func (w *Writer) WriteBoolean(b bool) {
-	if w.idx+1 > w.currentCap {
-		w.growBufferCap(w.idx + 1)
-	}
-
 	if b {
 		w.WriteUInt8(1)
 	} else {
 		w.WriteUInt8(0)
 	}
-
-	w.idx++
 }
 
 // WriteFloat32 will write float32 to the []byte at index
@@ -122,7 +116,7 @@ func (w *Writer) WriteInt16(n int16) {
 	}
 
 	for i := 0; i < 2; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 2
@@ -135,7 +129,7 @@ func (w *Writer) WriteInt32(n int32) {
 	}
 
 	for i := 0; i < 4; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 4
@@ -148,7 +142,7 @@ func (w *Writer) WriteInt64(n int64) {
 	}
 
 	for i := 0; i < 8; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 8
@@ -172,7 +166,7 @@ func (w *Writer) WriteUInt16(n uint16) {
 	}
 
 	for i := 0; i < 2; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 2
@@ -185,7 +179,7 @@ func (w *Writer) WriteUInt32(n uint32) {
 	}
 
 	for i := 0; i < 4; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i*8))
+		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 4
