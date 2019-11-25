@@ -16,7 +16,7 @@ var byteSlicePool = sync.Pool{
 
 // A Writer is a serializer
 type Writer struct {
-	byteSlice   []byte
+	byteSlice  []byte
 	idx        int
 	currentCap int
 }
@@ -26,7 +26,7 @@ func NewWriter() Writer {
 	byteSlice := byteSlicePool.Get().([]byte)
 
 	return Writer{
-		byteSlice:   byteSlice,
+		byteSlice:  byteSlice,
 		currentCap: cap(byteSlice),
 	}
 }
@@ -36,7 +36,7 @@ func NewWriterWithHeader() Writer {
 	byteSlice := byteSlicePool.Get().([]byte)
 
 	w := Writer{
-		byteSlice:   byteSlice,
+		byteSlice:  byteSlice,
 		currentCap: cap(byteSlice),
 	}
 
@@ -51,8 +51,8 @@ func GetByteSlice() []byte {
 }
 
 // PutByteSlice will return byteSlice to pool
-func PutByteSlice(bufBytes []byte) {
-	byteSlicePool.Put(bufBytes)
+func (w Writer) PutByteSlice() {
+	byteSlicePool.Put(w.byteSlice)
 }
 
 // Bytes will return []byte

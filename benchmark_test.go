@@ -27,6 +27,7 @@ type A struct {
 
 func (a A) Marshal() []byte {
 	w := NewWriter()
+	defer w.PutByteSlice()
 
 	w.WriteString(a.Name)
 	w.WriteInt64(a.BirthDay.Unix())
