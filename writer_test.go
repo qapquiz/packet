@@ -19,6 +19,19 @@ func TestWriteString(t *testing.T) {
 	}
 }
 
+func TestWriteStringSuffixZero(t *testing.T) {
+	w := NewWriter()
+
+	w.WriteString("abc")
+
+	got := w.Bytes()
+	want := []byte{97, 98, 99, 0}
+
+	if got[0] != want[0] && got[1] != want[1] && got[2] != want[2] && got[3] != want[3] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
 func TestWriteTrueBoolean(t *testing.T) {
 	w := NewWriter()
 

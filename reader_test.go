@@ -1,6 +1,8 @@
 package packet
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestReadString(t *testing.T) {
 	want := "abc"
@@ -10,6 +12,20 @@ func TestReadString(t *testing.T) {
 
 	r := NewReader(w.Bytes())
 	got := r.ReadString()
+
+	if got != want {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
+func TestReadStringSuffixZero(t *testing.T) {
+	want := "abc"
+
+	w := NewWriter()
+	w.WriteStringSuffixZero(want)
+
+	r := NewReader(w.Bytes())
+	got := r.ReadStringSuffixZero()
 
 	if got != want {
 		t.Errorf("got: %v, want: %v", got, want)

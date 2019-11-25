@@ -6,7 +6,7 @@ import (
 
 // A Reader is a deserializer
 type Reader struct {
-	byteSlice         []byte
+	byteSlice        []byte
 	currentReadIndex int
 }
 
@@ -39,6 +39,22 @@ func (r *Reader) ReadString() string {
 	r.currentReadIndex += int(l)
 
 	return string(r.byteSlice[idx : idx+int(l)])
+}
+
+// ReadStringSuffixZero will read string that end with 0
+func (r *Reader) ReadStringSuffixZero() string {
+	startReadAt := r.currentReadIndex
+
+	for {
+		charCode := r.byteSlice[r.currentReadIndex]
+		r.currentReadIndex++
+
+		if uint8(charCode) == 0 {
+			break
+		}
+	}
+
+	return string(r.byteSlice[startReadAt : r.currentReadIndex-1])
 }
 
 // ReadBoolean will read boolean at index

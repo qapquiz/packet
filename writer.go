@@ -45,13 +45,13 @@ func NewWriterWithHeader() Writer {
 	return w
 }
 
-// GetByteSlice will return []byte from pool
-func GetByteSlice() []byte {
+// GetByteSliceFromPool will return []byte from pool
+func GetByteSliceFromPool() []byte {
 	return byteSlicePool.Get().([]byte)
 }
 
-// PutByteSlice will return byteSlice to pool
-func (w Writer) PutByteSlice() {
+// PutByteSliceToPool will return byteSlice to pool
+func (w Writer) PutByteSliceToPool() {
 	byteSlicePool.Put(w.byteSlice)
 }
 
@@ -82,6 +82,20 @@ func (w *Writer) WriteString(s string) {
 	copy(w.byteSlice[w.idx:w.idx+l], s)
 
 	w.idx += l
+}
+
+// WriteStringSuffixZero will write string and end with 0
+func (w *Writer) WriteStringSuffixZero(s string) {
+	l := len(s)
+	if w.idx+1+l > w.currentCap {
+		w.growBufferCap(w.idx + 1 + l)
+	}
+
+	copy(w.byteSlice[w.idx:w.idx+l], s)
+
+	w.idx += l
+
+	w.WriteUInt8(0)
 }
 
 // WriteBoolean will write bool to the []byte at index
