@@ -2,31 +2,42 @@ package packet
 
 import (
 	"math"
+	"sync"
 )
 
 // DefaultBufferCap is a default size of the []byte in Writer
 const defaultBufferCap int = 64
 
+var byteSlicePool = sync.Pool{
+	New: func() interface{} {
+		return make([]byte, defaultBufferCap)
+	},
+}
+
 // A Writer is a serializer
 type Writer struct {
-	bufBytes   []byte
+	byteSlice   []byte
 	idx        int
 	currentCap int
 }
 
 // NewWriter will create new Writer
 func NewWriter() Writer {
+	byteSlice := byteSlicePool.Get().([]byte)
+
 	return Writer{
-		bufBytes:   make([]byte, defaultBufferCap),
-		currentCap: defaultBufferCap,
+		byteSlice:   byteSlice,
+		currentCap: cap(byteSlice),
 	}
 }
 
 // NewWriterWithHeader will create new Writer with header(uint16) for contain Content-Length
 func NewWriterWithHeader() Writer {
+	byteSlice := byteSlicePool.Get().([]byte)
+
 	w := Writer{
-		bufBytes:   make([]byte, defaultBufferCap),
-		currentCap: defaultBufferCap,
+		byteSlice:   byteSlice,
+		currentCap: cap(byteSlice),
 	}
 
 	w.WriteUInt16(0)
@@ -34,19 +45,29 @@ func NewWriterWithHeader() Writer {
 	return w
 }
 
+// GetByteSlice will return []byte from pool
+func GetByteSlice() []byte {
+	return byteSlicePool.Get().([]byte)
+}
+
+// PutByteSlice will return byteSlice to pool
+func PutByteSlice(bufBytes []byte) {
+	byteSlicePool.Put(bufBytes)
+}
+
 // Bytes will return []byte
 func (w Writer) Bytes() []byte {
-	return w.bufBytes[:w.idx]
+	return w.byteSlice[:w.idx]
 }
 
 // BytesWithHeader will return []byte with header
 func (w Writer) BytesWithHeader() []byte {
-	contentLength := uint16(len(w.bufBytes))
+	contentLength := uint16(len(w.byteSlice))
 
-	w.bufBytes[0] = byte(contentLength >> 0)
-	w.bufBytes[1] = byte(contentLength >> 8)
+	w.byteSlice[0] = byte(contentLength >> 0)
+	w.byteSlice[1] = byte(contentLength >> 8)
 
-	return w.bufBytes[:w.idx]
+	return w.byteSlice[:w.idx]
 }
 
 // WriteString will write string to []byte at index
@@ -58,7 +79,7 @@ func (w *Writer) WriteString(s string) {
 
 	w.WriteUInt64(uint64(l))
 
-	copy(w.bufBytes[w.idx:w.idx+l], s)
+	copy(w.byteSlice[w.idx:w.idx+l], s)
 
 	w.idx += l
 }
@@ -104,7 +125,7 @@ func (w *Writer) WriteInt8(n int8) {
 		w.growBufferCap(w.idx + 1)
 	}
 
-	w.bufBytes[w.idx] = byte(n)
+	w.byteSlice[w.idx] = byte(n)
 
 	w.idx++
 }
@@ -116,7 +137,7 @@ func (w *Writer) WriteInt16(n int16) {
 	}
 
 	for i := 0; i < 2; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
+		w.byteSlice[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 2
@@ -129,7 +150,7 @@ func (w *Writer) WriteInt32(n int32) {
 	}
 
 	for i := 0; i < 4; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
+		w.byteSlice[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 4
@@ -142,7 +163,7 @@ func (w *Writer) WriteInt64(n int64) {
 	}
 
 	for i := 0; i < 8; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
+		w.byteSlice[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 8
@@ -154,7 +175,7 @@ func (w *Writer) WriteUInt8(n uint8) {
 		w.growBufferCap(w.idx + 1)
 	}
 
-	w.bufBytes[w.idx] = byte(n)
+	w.byteSlice[w.idx] = byte(n)
 
 	w.idx++
 }
@@ -166,7 +187,7 @@ func (w *Writer) WriteUInt16(n uint16) {
 	}
 
 	for i := 0; i < 2; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
+		w.byteSlice[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 2
@@ -179,7 +200,7 @@ func (w *Writer) WriteUInt32(n uint32) {
 	}
 
 	for i := 0; i < 4; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
+		w.byteSlice[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 4
@@ -192,15 +213,15 @@ func (w *Writer) WriteUInt64(n uint64) {
 	}
 
 	for i := 0; i < 8; i++ {
-		w.bufBytes[w.idx+i] = byte(n >> (i * 8))
+		w.byteSlice[w.idx+i] = byte(n >> (i * 8))
 	}
 
 	w.idx += 8
 }
 
 func (w *Writer) growBufferCap(lengthNeed int) {
-	for cap(w.bufBytes) < lengthNeed {
-		w.bufBytes = append(w.bufBytes, make([]byte, w.currentCap)...)
+	for cap(w.byteSlice) < lengthNeed {
+		w.byteSlice = append(w.byteSlice, make([]byte, w.currentCap)...)
 		w.currentCap = w.currentCap * 2
 	}
 }

@@ -6,20 +6,20 @@ import (
 
 // A Reader is a deserializer
 type Reader struct {
-	bufBytes         []byte
+	byteSlice         []byte
 	currentReadIndex int
 }
 
 // NewReader will create Reader
 func NewReader(in []byte) Reader {
 	return Reader{
-		bufBytes: in,
+		byteSlice: in,
 	}
 }
 
 // IsComplete check is server read all data
 func (r Reader) IsComplete() bool {
-	return len(r.bufBytes) == r.currentReadIndex
+	return len(r.byteSlice) == r.currentReadIndex
 }
 
 // SkipHeader will skip index from 0 to 2
@@ -38,14 +38,14 @@ func (r *Reader) ReadString() string {
 	idx := r.currentReadIndex
 	r.currentReadIndex += int(l)
 
-	return string(r.bufBytes[idx : idx+int(l)])
+	return string(r.byteSlice[idx : idx+int(l)])
 }
 
 // ReadBoolean will read boolean at index
 func (r *Reader) ReadBoolean() bool {
 	idx := r.currentReadIndex
 	r.currentReadIndex++
-	return r.bufBytes[idx] == 1
+	return r.byteSlice[idx] == 1
 }
 
 // ReadFloat32 will read float32 at index
@@ -62,56 +62,56 @@ func (r *Reader) ReadFloat64() float64 {
 func (r *Reader) ReadInt8() int8 {
 	idx := r.currentReadIndex
 	r.currentReadIndex++
-	return int8(r.bufBytes[idx])
+	return int8(r.byteSlice[idx])
 }
 
 // ReadInt16 will read int16 at index
 func (r *Reader) ReadInt16() int16 {
 	idx := r.currentReadIndex
 	r.currentReadIndex += 2
-	return int16(r.bufBytes[idx]) | int16(r.bufBytes[idx+1])<<8
+	return int16(r.byteSlice[idx]) | int16(r.byteSlice[idx+1])<<8
 }
 
 // ReadInt32 will read int32 at index
 func (r *Reader) ReadInt32() int32 {
 	idx := r.currentReadIndex
 	r.currentReadIndex += 4
-	return int32(r.bufBytes[idx]) | int32(r.bufBytes[idx+1])<<8 | int32(r.bufBytes[idx+2])<<16 | int32(r.bufBytes[idx+3])<<24
+	return int32(r.byteSlice[idx]) | int32(r.byteSlice[idx+1])<<8 | int32(r.byteSlice[idx+2])<<16 | int32(r.byteSlice[idx+3])<<24
 }
 
 // ReadInt64 will read int64 at index
 func (r *Reader) ReadInt64() int64 {
 	idx := r.currentReadIndex
 	r.currentReadIndex += 8
-	return int64(r.bufBytes[idx]) | int64(r.bufBytes[idx+1])<<8 | int64(r.bufBytes[idx+2])<<16 | int64(r.bufBytes[idx+3])<<24 |
-		int64(r.bufBytes[idx+4])<<32 | int64(r.bufBytes[idx+5])<<40 | int64(r.bufBytes[idx+6])<<48 | int64(r.bufBytes[idx+7])<<56
+	return int64(r.byteSlice[idx]) | int64(r.byteSlice[idx+1])<<8 | int64(r.byteSlice[idx+2])<<16 | int64(r.byteSlice[idx+3])<<24 |
+		int64(r.byteSlice[idx+4])<<32 | int64(r.byteSlice[idx+5])<<40 | int64(r.byteSlice[idx+6])<<48 | int64(r.byteSlice[idx+7])<<56
 }
 
 // ReadUInt8 will read uint8 at index
 func (r *Reader) ReadUInt8() uint8 {
 	idx := r.currentReadIndex
 	r.currentReadIndex++
-	return uint8(r.bufBytes[idx])
+	return uint8(r.byteSlice[idx])
 }
 
 // ReadUInt16 will read uint16 at index
 func (r *Reader) ReadUInt16() uint16 {
 	idx := r.currentReadIndex
 	r.currentReadIndex += 2
-	return uint16(r.bufBytes[idx]) | uint16(r.bufBytes[idx+1])<<8
+	return uint16(r.byteSlice[idx]) | uint16(r.byteSlice[idx+1])<<8
 }
 
 // ReadUInt32 will read uint32 at index
 func (r *Reader) ReadUInt32() uint32 {
 	idx := r.currentReadIndex
 	r.currentReadIndex += 4
-	return uint32(r.bufBytes[idx]) | uint32(r.bufBytes[idx+1])<<8 | uint32(r.bufBytes[idx+2])<<16 | uint32(r.bufBytes[idx+3])<<24
+	return uint32(r.byteSlice[idx]) | uint32(r.byteSlice[idx+1])<<8 | uint32(r.byteSlice[idx+2])<<16 | uint32(r.byteSlice[idx+3])<<24
 }
 
 // ReadUInt64 will read uint64 at index
 func (r *Reader) ReadUInt64() uint64 {
 	idx := r.currentReadIndex
 	r.currentReadIndex += 8
-	return uint64(r.bufBytes[idx]) | uint64(r.bufBytes[idx+1])<<8 | uint64(r.bufBytes[idx+2])<<16 | uint64(r.bufBytes[idx+3])<<24 |
-		uint64(r.bufBytes[idx+4])<<32 | uint64(r.bufBytes[idx+5])<<40 | uint64(r.bufBytes[idx+6])<<48 | uint64(r.bufBytes[idx+7])<<56
+	return uint64(r.byteSlice[idx]) | uint64(r.byteSlice[idx+1])<<8 | uint64(r.byteSlice[idx+2])<<16 | uint64(r.byteSlice[idx+3])<<24 |
+		uint64(r.byteSlice[idx+4])<<32 | uint64(r.byteSlice[idx+5])<<40 | uint64(r.byteSlice[idx+6])<<48 | uint64(r.byteSlice[idx+7])<<56
 }
