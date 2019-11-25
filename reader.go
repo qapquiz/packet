@@ -31,6 +31,17 @@ func (r *Reader) SkipHeader() {
 	r.currentReadIndex += 2
 }
 
+// ReadBytes will read []byte at index
+func (r *Reader) ReadBytes(length int) []byte {
+	idx := r.currentReadIndex
+	r.currentReadIndex += length
+
+	data := make([]byte, length)
+	copy(data, r.byteSlice[idx:idx+length])
+
+	return data
+}
+
 // ReadString will read boolean at index
 func (r *Reader) ReadString() string {
 	l := r.ReadUInt64()

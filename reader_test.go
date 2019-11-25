@@ -4,6 +4,20 @@ import (
 	"testing"
 )
 
+func TestReadBytes(t *testing.T) {
+	want := []byte{1, 2}
+
+	w := NewWriter()
+	w.WriteBytes([]byte{1, 2})
+
+	r := NewReader(w.Bytes())
+	got := r.ReadBytes(len(want))
+
+	if got[0] != want[0] && got[1] != want[1] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
 func TestReadString(t *testing.T) {
 	want := "abc"
 

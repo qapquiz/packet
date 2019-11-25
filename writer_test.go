@@ -6,6 +6,19 @@ import (
 	"testing"
 )
 
+func TestWriteBytes(t *testing.T) {
+	w := NewWriter()
+
+	w.WriteBytes([]byte{1, 2})
+
+	got := w.Bytes()
+	want := []byte{1, 2}
+
+	if got[0] != want[0] && got[1] != want[1] {
+		t.Errorf("got: %v, want: %v", got, want)
+	}
+}
+
 func TestWriteString(t *testing.T) {
 	w := NewWriter()
 

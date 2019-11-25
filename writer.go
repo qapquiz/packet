@@ -70,6 +70,18 @@ func (w Writer) BytesWithHeader() []byte {
 	return w.byteSlice[:w.idx]
 }
 
+// WriteBytes will write []byte at index
+func (w *Writer) WriteBytes(b []byte) {
+	l := len(b)
+	if w.idx+l > w.currentCap {
+		w.growBufferCap(w.idx + l)
+	}
+
+	copy(w.byteSlice[w.idx:w.idx+l], b)
+
+	w.idx += l
+}
+
 // WriteString will write string to []byte at index
 func (w *Writer) WriteString(s string) {
 	l := len(s)
