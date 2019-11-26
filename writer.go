@@ -27,7 +27,7 @@ func NewWriter() Writer {
 
 	return Writer{
 		byteSlice:  byteSlice,
-		currentCap: cap(byteSlice),
+		currentCap: len(byteSlice),
 	}
 }
 
@@ -37,7 +37,7 @@ func NewWriterWithHeader() Writer {
 
 	w := Writer{
 		byteSlice:  byteSlice,
-		currentCap: cap(byteSlice),
+		currentCap: len(byteSlice),
 	}
 
 	w.WriteUInt16(0)
