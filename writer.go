@@ -246,8 +246,12 @@ func (w *Writer) WriteUInt64(n uint64) {
 }
 
 func (w *Writer) growBufferCap(lengthNeed int) {
-	for w.currentCap < lengthNeed {
-		w.byteSlice = append(w.byteSlice, make([]byte, w.currentCap)...)
-		w.currentCap = w.currentCap * 2
+	multiplier := 1
+
+	for w.currentCap * multiplier < lengthNeed {
+		multiplier *= 2
 	}
+
+	w.byteSlice = append(w.byteSlice, make([]byte, w.currentCap * multiplier)...)
+	w.currentCap = w.currentCap * multiplier
 }
