@@ -128,8 +128,6 @@ func (w *Writer) WriteFloat32(f float32) {
 	n := math.Float32bits(f)
 
 	w.WriteUInt32(n)
-
-	w.idx += 4
 }
 
 // WriteFloat64 will write float64 to the []byte at index
@@ -141,8 +139,6 @@ func (w *Writer) WriteFloat64(f float64) {
 	n := math.Float64bits(f)
 
 	w.WriteUInt64(n)
-
-	w.idx += 8
 }
 
 // WriteInt8 will write uint8 to the []byte at index

@@ -86,10 +86,10 @@ func TestWriteFalseBoolean(t *testing.T) {
 func TestWriteFloat32(t *testing.T) {
 	w := NewWriter()
 
-	w.WriteFloat32(float32(20))
+	w.WriteFloat32(float32(20.0312))
 
 	buf := bytes.NewBuffer([]byte{})
-	err := binary.Write(buf, binary.LittleEndian, float32(20))
+	err := binary.Write(buf, binary.LittleEndian, float32(20.0312))
 	if err != nil {
 		t.Error(err)
 	}
