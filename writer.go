@@ -23,7 +23,7 @@ type Writer struct {
 
 // NewWriter will create new Writer
 func NewWriter() Writer {
-	byteSlice := byteSlicePool.Get().([]byte)
+	byteSlice := GetByteSliceFromPool()
 
 	return Writer{
 		byteSlice:  byteSlice,
@@ -33,7 +33,7 @@ func NewWriter() Writer {
 
 // NewWriterWithHeader will create new Writer with header(uint16) for contain Content-Length
 func NewWriterWithHeader() Writer {
-	byteSlice := byteSlicePool.Get().([]byte)
+	byteSlice := GetByteSliceFromPool() 
 
 	w := Writer{
 		byteSlice:  byteSlice,
@@ -43,6 +43,11 @@ func NewWriterWithHeader() Writer {
 	w.WriteUInt16(0)
 
 	return w
+}
+
+// finish mean anyone cant use this writer anymore because we release the []byte
+func (w Writer) finish() {
+	
 }
 
 // GetByteSliceFromPool will return []byte from pool
@@ -62,7 +67,11 @@ func (w Writer) Bytes() []byte {
 
 // BytesWithHeader will return []byte with header
 func (w Writer) BytesWithHeader() []byte {
-	contentLength := uint16(len(w.byteSlice))
+	contentLength := uint16(w.idx)
+
+	if (w.idx < 2) {
+		return w.byteSlice[:w.idx]
+	}
 
 	w.byteSlice[0] = byte(contentLength >> 0)
 	w.byteSlice[1] = byte(contentLength >> 8)
